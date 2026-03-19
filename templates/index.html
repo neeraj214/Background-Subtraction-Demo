@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motion Detection Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Motion Detection System</h1>
+        
+        <div class="video-container">
+            <h3>Live Webcam Feed</h3>
+            <img src="{{ url_for('video_feed') }}" width="100%">
+        </div>
+
+        <div class="log-container">
+            <h3>Recent Motion Logs</h3>
+            <div id="motion-logs">
+                <p>Waiting for motion...</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
