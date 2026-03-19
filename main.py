@@ -1,52 +1,41 @@
 import cv2
-import numpy as np
-import datetime
+import sys
 
-def motion_detection():
-    # Initialize webcam
+def main():
+    # 1. Initialize VideoCapture with camera index 0
     cap = cv2.VideoCapture(0)
-    
-    # Initialize Background Subtractor
-    # MOG2 is a popular algorithm for background subtraction
-    back_sub = cv2.createBackgroundSubtractorMOG2()
 
-    print("Motion Detection started. Press 'q' to quit.")
+    # 2. Error check to see if camera opened correctly
+    if not cap.isOpened():
+        print("Error: Could not open webcam at index 0.")
+        sys.exit()
 
+    print("Live Feed started. Press 'q' to exit.")
+
+    # 3. Start a while loop to read frames continuously
     while True:
+        # 4. Read one frame from the camera
+        # ret is a boolean (True if frame read successfully), frame is the image array
         ret, frame = cap.read()
+
+        # 5. Check if frame was captured successfully
         if not ret:
+            print("Error: Could not read frame from camera.")
             break
 
-        # Apply background subtraction
-        fg_mask = back_sub.apply(frame)
+        # 6. Display the live frame in a window titled "Live Feed"
+        cv2.imshow("Live Feed", frame)
 
-        # Basic noise reduction (optional for skeleton)
-        _, fg_mask = cv2.threshold(fg_mask, 250, 255, cv2.THRESH_BINARY)
-
-        # Find contours of moving objects
-        contours, _ = cv2.findContours(fg_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-        for contour in contours:
-            if cv2.contourArea(contour) < 500:
-                continue
-            
-            # Motion detected!
-            (x, y, w, h) = cv2.boundingRect(contour)
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            
-            # Log motion (will be implemented in phase 2)
-            # timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            # print(f"Motion detected at {timestamp}")
-
-        # Display the result
-        cv2.imshow('Motion Detection', frame)
-        cv2.imshow('Foreground Mask', fg_mask)
-
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        # 7. Wait for 30ms and check if 'q' is pressed to exit
+        # waitKey(30) allows the window to refresh and handles keyboard input
+        if cv2.waitKey(30) & 0xFF == ord('q'):
+            print("Exiting...")
             break
 
+    # 8. Clean exit: Release camera resource and close all OpenCV windows
     cap.release()
     cv2.destroyAllWindows()
+    print("Webcam closed cleanly.")
 
 if __name__ == "__main__":
-    motion_detection()
+    main()
